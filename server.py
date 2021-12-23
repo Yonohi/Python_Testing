@@ -20,7 +20,7 @@ app.secret_key = 'something_special'
 competitions = loadCompetitions()
 clubs = loadClubs()
 
-@app.route('/',methods=['POST', 'GET'])
+@app.route('/')
 def index():
     return render_template('index.html')
 
@@ -52,7 +52,7 @@ def purchasePlaces():
     competition = [c for c in competitions if c['name'] == request.form['competition']][0]
     club = [c for c in clubs if c['name'] == request.form['club']][0]
     placesRequired = int(request.form['places'])
-    if placesRequired <= int(club['points']) and placesRequired > 0:
+    if 0 < placesRequired <= int(club['points']):
         if placesRequired <= int(competition['numberOfPlaces']):
             competition['numberOfPlaces'] = int(competition['numberOfPlaces'])-placesRequired
             flash('Great-booking complete!')
