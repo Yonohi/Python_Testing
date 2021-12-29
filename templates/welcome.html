@@ -7,11 +7,15 @@
 <body>
         <h2>Welcome, {{club['email']}} </h2><a href="{{url_for('logout')}}">Logout</a>
 
-    {% with messages = get_flashed_messages()%}
+    {% with messages = get_flashed_messages(with_categories=true)%}
     {% if messages %}
         <ul>
-       {% for message in messages %}
-            <li>{{message}}</li>
+       {% for category, message in messages %}
+            {% if category == "error" %}
+                <li style="color:red; list-style:none;">{{ message }}</li>
+            {% else %}
+                <li style="list-style:none;">{{message}}</li>
+            {% endif %}
         {% endfor %}
        </ul>
     {% endif%}

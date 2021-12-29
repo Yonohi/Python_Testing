@@ -33,7 +33,7 @@ def showSummary():
                                club=club,
                                competitions=competitions)
     except IndexError:
-        flash("Sorry, that email wasn't found.")
+        flash("Sorry, that email wasn't found.", 'error')
         return redirect('/')
 
 
@@ -44,7 +44,7 @@ def book(competition,club):
     if foundClub and foundCompetition:
         return render_template('booking.html',club=foundClub,competition=foundCompetition)
     else:
-        flash("Something went wrong-please try again")
+        flash("Something went wrong-please try again", 'error')
         return render_template('welcome.html', club=club, competitions=competitions)
 
 
@@ -68,14 +68,14 @@ def purchasePlaces():
                                        competitions=competitions)
             else:
                 flash("The number requested is greater than the number of "
-                      "places available.")
+                      "places available.", 'error')
                 return book(competition['name'],club['name'])
         else:
-            flash("A club can't book more than 12 places.")
+            flash("A club can't book more than 12 places.", 'error')
             return book(competition['name'], club['name'])
     else:
         flash(f"{club['name']} can't use this number of points."
-              f" Number available: {club['points']}")
+              f" Number available: {club['points']}", 'error')
         return book(competition['name'],club['name'])
 
 # TODO: Add route for points display
