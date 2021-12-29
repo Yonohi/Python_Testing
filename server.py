@@ -19,6 +19,7 @@ app.secret_key = 'something_special'
 
 competitions = loadCompetitions()
 clubs = loadClubs()
+initial_clubs = loadClubs()
 
 @app.route('/')
 def index():
@@ -50,19 +51,28 @@ def book(competition,club):
 @app.route('/purchasePlaces',methods=['POST'])
 def purchasePlaces():
     competition = [c for c in competitions if c['name'] == request.form['competition']][0]
+    initial_club = [c for c in initial_clubs if c['name'] == request.form['club']][0]
+    initial_club_points = int(initial_club['points'])
     club = [c for c in clubs if c['name'] == request.form['club']][0]
     placesRequired = int(request.form['places'])
+    # test places correctes pour le nombre de points du clubs
     if 0 < placesRequired <= int(club['points']):
-        if placesRequired <= int(competition['numberOfPlaces']):
-            competition['numberOfPlaces'] = int(competition['numberOfPlaces'])-placesRequired
-            club['points'] = int(club['points']) - placesRequired
-            flash('Great-booking complete!')
-            return render_template('welcome.html', club=club,
-                                   competitions=competitions)
+        if 0 < placesRequired <= 12 and\
+                0 < placesRequired <= (12 - (initial_club_points-int(club['points']))):
+            # test nombre ne dépassant pas le nombre de places dispo
+            if placesRequired <= int(competition['numberOfPlaces']):
+                competition['numberOfPlaces'] = int(competition['numberOfPlaces'])-placesRequired
+                club['points'] = int(club['points']) - placesRequired
+                flash('Great-booking complete!')
+                return render_template('welcome.html', club=club,
+                                       competitions=competitions)
+            else:
+                flash("The number requested is greater than the number of "
+                      "places available.")
+                return book(competition['name'],club['name'])
         else:
-            flash("The number requested is greater than the number of "
-                  "places available.")
-            return book(competition['name'],club['name'])
+            flash("A club can't book more than 12 places.")
+            return book(competition['name'], club['name'])
     else:
         flash(f"{club['name']} can't use this number of points."
               f" Number available: {club['points']}")
