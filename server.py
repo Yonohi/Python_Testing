@@ -1,4 +1,6 @@
 import json
+import re
+import datetime
 from flask import Flask,render_template,request,redirect,flash,url_for
 
 
@@ -13,6 +15,23 @@ def loadCompetitions():
          listOfCompetitions = json.load(comps)['competitions']
          return listOfCompetitions
 
+def date_is_ok(competition):
+    list_time_comp = re.split(r'[-: ]+', competition['date'])
+    year = int(list_time_comp[0])
+    month = int(list_time_comp[1])
+    day = int(list_time_comp[2])
+    hour = int(list_time_comp[3])
+    min = int(list_time_comp[4])
+    comp_datetime = datetime.datetime(year=year,
+                                      month=month,
+                                      day=day,
+                                      hour=hour,
+                                      minute=min)
+    today = datetime.datetime.today()
+    if today < comp_datetime:
+        return True
+    else:
+        return False
 
 app = Flask(__name__)
 app.secret_key = 'something_special'
@@ -41,7 +60,13 @@ def book(competition,club):
     foundClub = [c for c in clubs if c['name'] == club][0]
     foundCompetition = [c for c in competitions if c['name'] == competition][0]
     if foundClub and foundCompetition:
-        return render_template('booking.html',club=foundClub,competition=foundCompetition)
+        if date_is_ok(foundCompetition):
+            flash('Booking available!')
+            return render_template('booking.html',club=foundClub,competition=foundCompetition)
+        else:
+            flash("Sorry this competition is too old.", 'error')
+            return render_template('welcome.html', club=foundClub,
+                                   competitions=competitions)
     else:
         flash("Something went wrong-please try again", 'error')
         return render_template('welcome.html', club=club, competitions=competitions)
@@ -87,3 +112,4 @@ def purchasePlaces():
 @app.route('/logout')
 def logout():
     return redirect(url_for('index'))
+
