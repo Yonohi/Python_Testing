@@ -32,7 +32,7 @@ def showSummary():
                                club=club,
                                competitions=competitions)
     except IndexError:
-        flash("Sorry, that email wasn't found.")
+        flash("Sorry, that email wasn't found.", 'error')
         return redirect('/')
 
 
@@ -43,7 +43,7 @@ def book(competition,club):
     if foundClub and foundCompetition:
         return render_template('booking.html',club=foundClub,competition=foundCompetition)
     else:
-        flash("Something went wrong-please try again")
+        flash("Something went wrong-please try again", 'error')
         return render_template('welcome.html', club=club, competitions=competitions)
 
 
