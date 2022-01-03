@@ -49,7 +49,8 @@ def showSummary():
         club = [club for club in clubs if club['email'] == request.form['email']][0]
         return render_template('welcome.html',
                                club=club,
-                               competitions=competitions)
+                               competitions=competitions,
+                               clubs=clubs)
     except IndexError:
         flash("Sorry, that email wasn't found.", 'error')
         return redirect('/')
@@ -66,10 +67,10 @@ def book(competition,club):
         else:
             flash("Sorry this competition is too old.", 'error')
             return render_template('welcome.html', club=foundClub,
-                                   competitions=competitions)
+                                   competitions=competitions, clubs=clubs)
     else:
         flash("Something went wrong-please try again", 'error')
-        return render_template('welcome.html', club=club, competitions=competitions)
+        return render_template('welcome.html', club=club, competitions=competitions, clubs=clubs)
 
 
 @app.route('/purchasePlaces',methods=['POST'])
@@ -93,7 +94,7 @@ def purchasePlaces():
                 competition[f"{club['name']}"] += placesRequired
                 flash('Great-booking complete!')
                 return render_template('welcome.html', club=club,
-                                       competitions=competitions)
+                                       competitions=competitions, clubs=clubs)
             else:
                 flash("The number requested is greater than the number of "
                       "places available.", 'error')
@@ -107,7 +108,9 @@ def purchasePlaces():
         return book(competition['name'],club['name'])
 
 # TODO: Add route for points display
-
+@app.route('/pointsDisplay')
+def pointsDisplay():
+    return render_template('points_board.html', clubs=clubs)
 
 @app.route('/logout')
 def logout():
