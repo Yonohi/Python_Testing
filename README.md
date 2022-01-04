@@ -1,5 +1,10 @@
 # gudlift-registration
 
+### Naming convention:
+- Functions: camelCase
+- Variables: camelCase or according to PEP8
+
+
 1. Why
 
 
@@ -33,7 +38,11 @@
 
     - Flask requires that you set an environmental variable to the python file. However you do that, you'll want to set the file to be <code>server.py</code>. Check [here](https://flask.palletsprojects.com/en/1.1.x/quickstart/#a-minimal-application) for more details
 
+    - (For development: don't forget to specify it with FLASK_ENV=development)
+
     - You should now be ready to test the application. In the directory, type either <code>flask run</code> or <code>python -m flask run</code>. The app should respond with an address you should be able to go to using your browser.
+
+    - To access the points board, add to the previous address <code>/pointsDisplay</code>
 
 4. Current Setup
 
@@ -49,3 +58,6 @@
     We also like to show how well we're testing, so there's a module called 
     [coverage](https://coverage.readthedocs.io/en/coverage-5.1/) you should add to your project.
 
+6. Note
+
+   If, like me, you have two versions of python on your computer be careful when you use pytest (if you use it), you have to type : <code>python3 -m pytest</code>
