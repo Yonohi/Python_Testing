@@ -6,14 +6,15 @@ from flask import Flask,render_template,request,redirect,flash,url_for
 
 def loadClubs():
     with open('clubs.json') as c:
-         listOfClubs = json.load(c)['clubs']
-         return listOfClubs
+        listOfClubs = json.load(c)['clubs']
+        return listOfClubs
 
 
 def loadCompetitions():
     with open('competitions.json') as comps:
-         listOfCompetitions = json.load(comps)['competitions']
-         return listOfCompetitions
+        listOfCompetitions = json.load(comps)['competitions']
+        return listOfCompetitions
+
 
 def date_is_ok(competition):
     list_time_comp = re.split(r'[-: ]+', competition['date'])
@@ -33,15 +34,18 @@ def date_is_ok(competition):
     else:
         return False
 
+
 app = Flask(__name__)
 app.secret_key = 'something_special'
 
 competitions = loadCompetitions()
 clubs = loadClubs()
 
+
 @app.route('/')
 def index():
     return render_template('index.html')
+
 
 @app.route('/showSummary',methods=['POST'])
 def showSummary():
@@ -66,11 +70,16 @@ def book(competition,club):
             return render_template('booking.html',club=foundClub,competition=foundCompetition)
         else:
             flash("Sorry this competition is too old.", 'error')
-            return render_template('welcome.html', club=foundClub,
-                                   competitions=competitions, clubs=clubs)
+            return render_template('welcome.html',
+                                   club=foundClub,
+                                   competitions=competitions,
+                                   clubs=clubs)
     else:
         flash("Something went wrong-please try again", 'error')
-        return render_template('welcome.html', club=club, competitions=competitions, clubs=clubs)
+        return render_template('welcome.html',
+                               club=club,
+                               competitions=competitions,
+                               clubs=clubs)
 
 
 @app.route('/purchasePlaces',methods=['POST'])
@@ -98,7 +107,7 @@ def purchasePlaces():
             else:
                 flash("The number requested is greater than the number of "
                       "places available.", 'error')
-                return book(competition['name'],club['name'])
+                return book(competition['name'], club['name'])
         else:
             flash("A club can't book more than 12 places.", 'error')
             return book(competition['name'], club['name'])
@@ -107,12 +116,12 @@ def purchasePlaces():
               f" Number available: {club['points']}", 'error')
         return book(competition['name'],club['name'])
 
-# TODO: Add route for points display
+
 @app.route('/pointsDisplay')
 def pointsDisplay():
     return render_template('points_board.html', clubs=clubs)
 
+
 @app.route('/logout')
 def logout():
     return redirect(url_for('index'))
-
