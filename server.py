@@ -1,8 +1,10 @@
 import json
 import re
 import datetime
-from flask import Flask,render_template,request,redirect,flash,url_for
+from flask import Flask, render_template, request, redirect, flash, url_for
 
+
+POINTS_PER_PLACE = 3
 
 def loadClubs():
     with open('clubs.json') as c:
@@ -88,18 +90,19 @@ def purchasePlaces():
     club = [c for c in clubs if c['name'] == request.form['club']][0]
     placesRequired = int(request.form['places'])
     # test places correctes pour le nombre de points du clubs
-    if 0 < placesRequired <= int(club['points']):
+    if 0 < placesRequired * POINTS_PER_PLACE <= int(club['points']):
+        # Création ou recherche d'une clé contenant le nb de points
         try :
-            nb_points = int(competition[f"{club['name']}"])
+            nb_places = int(competition[f"{club['name']}"])
         except KeyError:
             competition[f"{club['name']}"] = 0
-            nb_points = int(competition[f"{club['name']}"])
+            nb_places = int(competition[f"{club['name']}"])
         if 0 < placesRequired <= 12 and\
-                0 < placesRequired <= (12 - nb_points):
+                0 < placesRequired <= (12 - nb_places):
             # test nombre ne dépassant pas le nombre de places dispo
             if placesRequired <= int(competition['numberOfPlaces']):
                 competition['numberOfPlaces'] = int(competition['numberOfPlaces'])-placesRequired
-                club['points'] = int(club['points']) - placesRequired
+                club['points'] = int(club['points']) - (placesRequired * POINTS_PER_PLACE)
                 competition[f"{club['name']}"] += placesRequired
                 flash('Great-booking complete!')
                 return render_template('welcome.html', club=club,

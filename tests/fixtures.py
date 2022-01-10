@@ -1,4 +1,4 @@
-from Python_Testing.server import app
+from Python_Testing.server import app, POINTS_PER_PLACE
 import pytest
 
 
@@ -52,12 +52,12 @@ def clubs():
         {
             "name": "Test Club+12",
             "email": "test@test",
-            "points": "25"
+            "points": f"{25*int(POINTS_PER_PLACE)}"
         },
         {
             "name": "Test Club-12",
             "email": "test2@test",
-            "points": "8"
+            "points": f"{8*int(POINTS_PER_PLACE)}"
         }
     ]
     return clubs

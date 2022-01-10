@@ -2,6 +2,7 @@ import pytest
 from flask import request
 from ..fixtures import client, competitions, clubs, old_competitions
 from Python_Testing import server
+from server import POINTS_PER_PLACE
 
 
 def test_client(client):
@@ -75,16 +76,16 @@ def test_purchase_places(mocker, points, client, competitions, clubs):
         # test strictement positif
         if points in [-1, 0]:
             message = "Test Club+12 can't use this number of points." \
-                      " Number available: 25".replace("'", "&#39;")
+                      f" Number available: {25 * POINTS_PER_PLACE}".replace("'", "&#39;")
             assert message in response.data.decode()
-            assert int(clubs[0]['points']) == 25
+            assert int(clubs[0]['points']) == 25 * POINTS_PER_PLACE
             assert int(competitions[0]['numberOfPlaces']) == 25
 
         # 13 (12+1)
         elif points in [13]:
             message = "A club can't book more than 12 places.".replace("'", "&#39;")
             assert message in response.data.decode()
-            assert int(clubs[0]['points']) == 25
+            assert int(clubs[0]['points']) == 25 * POINTS_PER_PLACE
             assert int(competitions[0]['numberOfPlaces']) == 25
 
         # test nb ok
@@ -92,7 +93,7 @@ def test_purchase_places(mocker, points, client, competitions, clubs):
             message = 'Great-booking complete!'
             assert message in response.data.decode()
             if points == 1:
-                assert int(clubs[0]['points']) == 24
+                assert int(clubs[0]['points']) == 24 * POINTS_PER_PLACE
                 assert int(competitions[0]['numberOfPlaces']) == 24
 
     # test succession de demande > 12 (2*7 à l'aide du test précédent)
@@ -106,7 +107,7 @@ def test_purchase_places(mocker, points, client, competitions, clubs):
                                                                    "&#39;")
         assert message in response.data.decode()
         if points == 7:
-            assert int(clubs[0]['points']) == 18
+            assert int(clubs[0]['points']) == 18 * POINTS_PER_PLACE
             assert int(competitions[0]['numberOfPlaces']) == 18
 
     # 2) club < 12 et comp >12
@@ -121,14 +122,14 @@ def test_purchase_places(mocker, points, client, competitions, clubs):
         if points in [8]:
             message = "Great-booking complete!"
             assert message in response.data.decode()
-            assert int(clubs[1]['points']) == 0
+            assert int(clubs[1]['points']) == 0 * POINTS_PER_PLACE
             assert int(competitions[0]['numberOfPlaces']) == 17
         # test max+1
         elif points in [9]:
             message = "Test Club-12 can't use this number of points." \
-                      " Number available: 8".replace("'", "&#39;")
+                      f" Number available: {8 * POINTS_PER_PLACE}".replace("'", "&#39;")
             assert message in response.data.decode()
-            assert int(clubs[1]['points']) == 8
+            assert int(clubs[1]['points']) == 8 * POINTS_PER_PLACE
             assert int(competitions[0]['numberOfPlaces']) == 25
 
     # 3) club < 12, comp < 12 et club > comp
@@ -144,7 +145,7 @@ def test_purchase_places(mocker, points, client, competitions, clubs):
             message = "The number requested is greater than the number of " \
                       "places available."
             assert message in response.data.decode()
-            assert int(clubs[1]['points']) == 8
+            assert int(clubs[1]['points']) == 8 * POINTS_PER_PLACE
             assert int(competitions[1]['numberOfPlaces']) == 5
 
 
