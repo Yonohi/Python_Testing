@@ -60,4 +60,10 @@
 
 6. Note
 
-   If, like me, you have two versions of python on your computer be careful when you use pytest (if you use it), you have to type : <code>python3 -m pytest</code>
+   If, like me, you have two versions of python on your computer be careful when you use pytest (if you use it), you have to type : <code>python3 -m pytest</code>.
+   
+   And don't forget to set values for app and env:
+   ```
+   export FLASK_APP=server.py
+   export FLASK_ENV=development
+   ```
